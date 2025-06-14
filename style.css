@@ -300,79 +300,41 @@ a:hover, a:focus {
     margin-top: 3rem;
 }
 
-/* Bottom Footer Bar */
-.bottom-footer-bar {
-    background: #f9f9f9;
-    font-size: 14px;
-    padding: 1em 0;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    color: #333;
-    margin-top: 1rem;
+/* Enhanced Footer Columns */
+.footer-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
 }
 
-.bottom-footer-inner {
+.footer-column {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1em;
-    flex-wrap: wrap;
+    flex-direction: column;
 }
 
-.bottom-footer-left,
-.bottom-footer-center,
-.bottom-footer-right {
-    flex: 1;
-    text-align: center;
-}
-
-.bottom-footer-left {
-    text-align: left;
-}
-
-.bottom-footer-right {
-    text-align: right;
-}
-
-/* Reversed Layout for Bottom Footer */
-.bottom-footer-bar.reverse-layout .bottom-footer-left {
-    text-align: right;
-}
-
-.bottom-footer-bar.reverse-layout .bottom-footer-right {
-    text-align: left;
-}
-
-/* Swap the content using flexbox direction */
-.bottom-footer-bar.reverse-layout .bottom-footer-inner {
-    flex-direction: row-reverse;
-}
-
-.bottom-footer-bar a {
-    color: inherit;
-    text-decoration: none;
-    margin-right: 0.75em;
-}
-
-/* Bottom Footer Menu */
-.bottom-footer-menu {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0;
+.footer-column .widget {
+    background: transparent;
+    border: none;
     padding: 0;
-    list-style: none;
+    margin-bottom: 1.5rem;
 }
 
-.bottom-footer-menu li {
-    display: inline-block;
-    margin-right: 1em;
+.footer-column .widget-title {
+    color: #ffffff;
+    border-bottom-color: var(--mm-color-primary);
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
 }
 
-.bottom-footer-menu a {
-    display: inline-block;
-    padding: 0.25em 0;
+.footer-column .widget a {
+    color: #ffffff;
+    opacity: 0.8;
+    transition: var(--mm-transition);
 }
 
-.bottom-footer-bar a:hover {
+.footer-column .widget a:hover {
+    opacity: 1;
     text-decoration: underline;
 }
 
@@ -385,6 +347,64 @@ a:hover, a:focus {
     margin-bottom: 2rem;
 }
 
+.footer-primary-menu,
+.footer-secondary-menu {
+    flex: 1;
+}
+
+/* Footer Menu Alignment Classes */
+.footer-menu-align-left {
+    text-align: left;
+}
+
+.footer-menu-align-left ul {
+    justify-content: flex-start;
+}
+
+.footer-menu-align-center {
+    text-align: center;
+}
+
+.footer-menu-align-center ul {
+    justify-content: center;
+}
+
+.footer-menu-align-right {
+    text-align: right;
+}
+
+.footer-menu-align-right ul {
+    justify-content: flex-end;
+}
+
+/* Footer Navigation Styling */
+.footer-navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.footer-navigation li {
+    margin: 0 0.75em 0.5em 0;
+}
+
+.footer-navigation a {
+    color: #ffffff;
+    text-decoration: none;
+    display: inline-block;
+    padding: 0.25em 0;
+    opacity: 0.8;
+    transition: var(--mm-transition);
+}
+
+.footer-navigation a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Legacy Footer Menu Support */
 .footer-left-menu,
 .footer-right-menu {
     flex: 1;
@@ -462,28 +482,80 @@ a:hover, a:focus {
     text-align: right;
 }
 
-/* Responsive Footer Menus */
-@media (max-width: 768px) {
-    .footer-menus-container {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .footer-left-menu,
-    .footer-right-menu {
-        max-width: 100%;
-        width: 100%;
-        margin-bottom: 1rem;
-    }
-    
-    .footer-left-nav,
-    .footer-right-nav {
-        text-align: center;
-    }
-    
-    .footer-navigation-vertical ul {
-        align-items: center;
-    }
+/* Bottom Footer Bar */
+.bottom-footer-bar {
+    background: #f9f9f9;
+    font-size: 14px;
+    padding: 1em 0;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    color: #333;
+    margin-top: 1rem;
+}
+
+.bottom-footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+.bottom-footer-left,
+.bottom-footer-center,
+.bottom-footer-right {
+    flex: 1;
+    text-align: center;
+}
+
+.bottom-footer-left {
+    text-align: left;
+}
+
+.bottom-footer-right {
+    text-align: right;
+}
+
+/* Reversed Layout for Bottom Footer */
+.bottom-footer-bar.reverse-layout .bottom-footer-left {
+    text-align: right;
+}
+
+.bottom-footer-bar.reverse-layout .bottom-footer-right {
+    text-align: left;
+}
+
+/* Swap the content using flexbox direction */
+.bottom-footer-bar.reverse-layout .bottom-footer-inner {
+    flex-direction: row-reverse;
+}
+
+.bottom-footer-bar a {
+    color: inherit;
+    text-decoration: none;
+    margin-right: 0.75em;
+}
+
+/* Bottom Footer Menu */
+.bottom-footer-menu {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.bottom-footer-menu li {
+    display: inline-block;
+    margin-right: 1em;
+}
+
+.bottom-footer-menu a {
+    display: inline-block;
+    padding: 0.25em 0;
+}
+
+.bottom-footer-bar a:hover {
+    text-decoration: underline;
 }
 
 .bottom-footer-center {
@@ -643,6 +715,62 @@ select:focus {
     h1 { font-size: 2rem; }
     h2 { font-size: 1.75rem; }
     h3 { font-size: 1.5rem; }
+    
+    /* Responsive Footer */
+    .footer-columns {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .footer-menus-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .footer-primary-menu,
+    .footer-secondary-menu {
+        width: 100%;
+    }
+    
+    .footer-navigation ul {
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .footer-navigation li {
+        margin: 0;
+    }
+    
+    .footer-left-menu,
+    .footer-right-menu {
+        max-width: 100%;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .footer-left-nav,
+    .footer-right-nav {
+        text-align: center;
+    }
+    
+    .footer-navigation-vertical ul {
+        align-items: center;
+    }
+    
+    .bottom-footer-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .bottom-footer-left,
+    .bottom-footer-center,
+    .bottom-footer-right {
+        text-align: center;
+    }
 }
 
 /* Accessibility */
@@ -722,9 +850,6 @@ select:focus {
     color: var(--mm-color-text-light);
     margin-bottom: 0.5rem;
 }
-
-/* Remove any editor-only styles from this file. Editor-only styles should be in style-editor.css. */
-
 
 /* Top Header Bar Styles */
 .top-header-bar {

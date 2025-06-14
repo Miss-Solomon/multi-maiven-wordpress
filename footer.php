@@ -12,21 +12,19 @@
     <footer id="colophon" class="site-footer">
         <?php do_action('mm_footer_inside_before'); ?>
         
-        <div class="footer-menus-container mm-container">
-            <div class="footer-left-menu">
-                <?php mm_display_vertical_footer_menu('footer-left', '', 'footer-left-nav'); ?>
-            </div>
+        <div class="mm-container">
+            <?php
+            // Render footer columns with widget areas
+            mm_render_footer_columns();
             
-            <div class="footer-ad-container">
-                <?php 
-                // Display responsive footer ad
-                mm_display_responsive_ad( 'footer' );
-                ?>
-            </div>
+            // Render footer menus with alignment
+            mm_render_footer_menus();
             
-            <div class="footer-right-menu">
-                <?php mm_display_vertical_footer_menu('footer-right', '', 'footer-right-nav'); ?>
-            </div>
+            // Display responsive footer ad (if enabled)
+            if (get_theme_mod('mm_show_footer_ad', true)) {
+                mm_display_responsive_ad('footer');
+            }
+            ?>
         </div>
         
         <?php 

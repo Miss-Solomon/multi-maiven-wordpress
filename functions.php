@@ -31,13 +31,16 @@ function mm_setup() {
      */
     add_theme_support('post-thumbnails');
 
-    // This theme uses wp_nav_menus() in one location.
+    // This theme uses wp_nav_menus() in multiple locations.
     register_nav_menus(
         array(
             'menu-1' => esc_html__('Primary', 'multi-maiven'),
             'footer-left' => esc_html__('Footer Left', 'multi-maiven'),
             'footer-right' => esc_html__('Footer Right', 'multi-maiven'),
             'header-left' => esc_html__('Header Left', 'multi-maiven'),
+            // New footer menu locations for enhanced footer builder
+            'footer-primary' => esc_html__('Primary Footer Menu', 'multi-maiven'),
+            'footer-secondary' => esc_html__('Secondary Footer Menu', 'multi-maiven'),
         )
     );
 
@@ -141,8 +144,33 @@ function mm_widgets_init() {
             'after_title'   => '</h2>',
         )
     );
+
+    // Register dynamic footer column widget areas
+    $footer_columns = get_theme_mod('mm_footer_column_count', 3);
+    for ($i = 1; $i <= $footer_columns; $i++) {
+        register_sidebar(
+            array(
+                'name'          => sprintf(esc_html__('Footer Column %d', 'multi-maiven'), $i),
+                'id'            => 'footer-column-' . $i,
+                'description'   => sprintf(esc_html__('Add widgets here to appear in footer column %d.', 'multi-maiven'), $i),
+                'before_widget' => '<section id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</section>',
+                'before_title'  => '<h3 class="widget-title">',
+                'after_title'   => '</h3>',
+            )
+        );
+    }
 }
 add_action('widgets_init', 'mm_widgets_init');
+
+/**
+ * Re-register widget areas when footer column count changes
+ */
+function mm_refresh_footer_widgets() {
+    // This will be called when customizer settings change
+    mm_widgets_init();
+}
+add_action('customize_save_after', 'mm_refresh_footer_widgets');
 
 /**
  * Enqueue scripts and styles.
@@ -603,6 +631,33 @@ function mm_display_vertical_footer_menu($theme_location = 'footer-left', $menu_
     
     $menu_class = 'footer-menu-vertical ' . $menu_class;
     $container_class = 'footer-navigation-vertical ' . $container_class;
+    
+    wp_nav_menu(array(
+        'theme_location' => $theme_location,
+        'menu_class'     => $menu_class,
+        'container'      => 'nav',
+        'container_class' => $container_class,
+        'depth'          => 1,
+        'fallback_cb'    => false,
+    ));
+}
+
+/**
+ * Display footer menu with alignment
+ * 
+ * @param string $theme_location The menu location to display
+ * @param string $alignment The alignment (left, center, right)
+ * @param string $additional_classes Additional CSS classes
+ * @return void
+ */
+function mm_display_footer_menu_with_alignment($theme_location, $alignment = 'left', $additional_classes = '') {
+    if (!has_nav_menu($theme_location)) {
+        return;
+    }
+    
+    $alignment_class = 'footer-menu-align-' . $alignment;
+    $menu_class = 'footer-menu ' . $alignment_class . ' ' . $additional_classes;
+    $container_class = 'footer-navigation ' . $alignment_class;
     
     wp_nav_menu(array(
         'theme_location' => $theme_location,
