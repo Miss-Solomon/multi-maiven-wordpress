@@ -2,56 +2,47 @@
 /**
  * The template for displaying archive pages
  *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
  * @package Multi_Maiven
  */
 
 get_header();
-
-// Get sidebar position from customizer
-$sidebar_position = get_theme_mod( 'sidebar_position', 'right' );
-$has_sidebar = ( $sidebar_position !== 'none' && is_active_sidebar( 'primary-sidebar' ) );
 ?>
 
-	<main id="primary" class="site-main">
+<main id="primary" class="site-main">
+    <div class="mm-container">
+        <div class="content-area <?php echo is_active_sidebar('sidebar-1') ? 'has-sidebar' : ''; ?>">
+            <div class="main-content">
+                <?php if (have_posts()) : ?>
+                    <header class="page-header">
+                        <?php
+                        the_archive_title('<h1 class="page-title">', '</h1>');
+                        the_archive_description('<div class="archive-description">', '</div>');
+                        ?>
+                    </header><!-- .page-header -->
 
-		<?php if ( have_posts() ) : ?>
+                    <?php
+                    /* Start the Loop */
+                    while (have_posts()) :
+                        the_post();
+                        get_template_part('template-parts/content', get_post_type());
+                    endwhile;
 
-			<header class="page-header">
-				<?php
-				the_archive_title( '<h1 class="page-title">', '</h1>' );
-				the_archive_description( '<div class="archive-description">', '</div>' );
-				?>
-			</header><!-- .page-header -->
+                    the_posts_navigation();
 
-			<?php
-			/* Start the Loop */
-			while ( have_posts() ) :
-				the_post();
+                else :
+                    get_template_part('template-parts/content', 'none');
+                endif;
+                ?>
+            </div><!-- .main-content -->
 
-				/*
-				 * Include the Post-Type-specific template for the content.
-				 * If you want to override this in a child theme, then include a file
-				 * called content-___.php (where ___ is the Post Type name) and that will be used instead.
-				 */
-				get_template_part( 'template-parts/content', get_post_type() );
-
-			endwhile;
-
-			the_posts_navigation();
-
-		else :
-
-			get_template_part( 'template-parts/content', 'none' );
-
-		endif;
-		?>
-
-	</main><!-- #primary -->
+            <?php if (is_active_sidebar('sidebar-1')) : ?>
+                <aside id="secondary" class="widget-area">
+                    <?php dynamic_sidebar('sidebar-1'); ?>
+                </aside><!-- #secondary -->
+            <?php endif; ?>
+        </div><!-- .content-area -->
+    </div><!-- .mm-container -->
+</main><!-- #primary -->
 
 <?php
-if ( $has_sidebar ) {
-	get_sidebar();
-}
 get_footer();

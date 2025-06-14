@@ -2,44 +2,42 @@
 /**
  * The template for displaying the footer
  *
- * Contains the closing of the #content div and all content after.
- *
- * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
- *
  * @package Multi_Maiven
  */
 
 ?>
-		</div><!-- .container -->
-	</div><!-- #content -->
 
-	<?php
-	/**
-	 * Hook: mm_before_footer
-	 *
-	 * @hooked Multi_Maiven_Footer_Builder::before_footer - 10
-	 */
-	do_action( 'mm_before_footer' );
-	?>
+    <?php do_action('mm_footer_before'); ?>
 
-	<?php
-	/**
-	 * Hook: mm_footer
-	 *
-	 * @hooked Multi_Maiven_Footer_Builder::footer_markup - 10
-	 */
-	do_action( 'mm_footer' );
-	?>
+    <footer id="colophon" class="site-footer">
+        <?php do_action('mm_footer_inside_before'); ?>
+        
+        <div class="footer-menus-container mm-container">
+            <div class="footer-left-menu">
+                <?php mm_display_vertical_footer_menu('footer-left', '', 'footer-left-nav'); ?>
+            </div>
+            
+            <div class="footer-ad-container">
+                <?php 
+                // Display responsive footer ad
+                mm_display_responsive_ad( 'footer' );
+                ?>
+            </div>
+            
+            <div class="footer-right-menu">
+                <?php mm_display_vertical_footer_menu('footer-right', '', 'footer-right-nav'); ?>
+            </div>
+        </div>
+        
+        <?php 
+        // Include the bottom footer bar
+        get_template_part('template-parts/footer/footer-bottom');
+        ?>
+        
+        <?php do_action('mm_footer_inside_after'); ?>
+    </footer><!-- #colophon -->
 
-	<?php
-	/**
-	 * Hook: mm_after_footer
-	 *
-	 * @hooked Multi_Maiven_Footer_Builder::after_footer - 10
-	 */
-	do_action( 'mm_after_footer' );
-	?>
-
+    <?php do_action('mm_footer_after'); ?>
 </div><!-- #page -->
 
 <?php wp_footer(); ?>
