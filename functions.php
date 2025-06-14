@@ -127,8 +127,20 @@ function multi_maiven_scripts() {
 	// Enqueue custom CSS
 	wp_enqueue_style( 'multi-maiven-custom', get_template_directory_uri() . '/assets/css/custom.css', array(), MULTI_MAIVEN_VERSION );
 	
+	// Enqueue dark mode CSS
+	wp_enqueue_style( 'multi-maiven-dark-mode', get_template_directory_uri() . '/assets/css/dark-mode.css', array(), MULTI_MAIVEN_VERSION );
+	
 	// Enqueue main JavaScript file
-	wp_enqueue_script( 'multi-maiven-script', get_template_directory_uri() . '/assets/js/main.js', array(), MULTI_MAIVEN_VERSION, true );
+	wp_enqueue_script( 'multi-maiven-script', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), MULTI_MAIVEN_VERSION, true );
+	
+	// Enqueue dark mode JavaScript
+	wp_enqueue_script( 'multi-maiven-dark-mode', get_template_directory_uri() . '/assets/js/dark-mode.js', array('jquery'), MULTI_MAIVEN_VERSION, true );
+	
+	// Enqueue customizer JavaScript
+	if ( is_customize_preview() ) {
+		wp_enqueue_script( 'multi-maiven-customizer', get_template_directory_uri() . '/assets/js/customizer.js', array( 'customize-preview', 'jquery' ), MULTI_MAIVEN_VERSION, true );
+		wp_enqueue_script( 'multi-maiven-footer-builder', get_template_directory_uri() . '/assets/js/footer-builder.js', array( 'customize-preview', 'jquery' ), MULTI_MAIVEN_VERSION, true );
+	}
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -167,6 +179,16 @@ require get_template_directory() . '/inc/block-patterns.php';
 if ( defined( 'JETPACK__VERSION' ) ) {
 	require get_template_directory() . '/inc/jetpack.php';
 }
+
+/**
+ * Load Header Builder functionality.
+ */
+require get_template_directory() . '/inc/header-builder.php';
+
+/**
+ * Load Footer Builder functionality.
+ */
+require get_template_directory() . '/inc/footer-builder.php';
 
 /**
  * Dequeue unnecessary block styles.

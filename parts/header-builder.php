@@ -42,8 +42,17 @@ class Multi_Maiven_Header_Builder {
      */
     public function header_styles() {
         // Get customizer settings
-        $sticky_header = get_theme_mod( 'sticky_header', false );
-        $transparent_header = get_theme_mod( 'transparent_header', false );
+        $sticky_header = get_theme_mod( 'mm_sticky_header', false );
+        $transparent_header = get_theme_mod( 'mm_transparent_header', false );
+        $header_padding_top = get_theme_mod( 'mm_header_padding_top', '20' );
+        $header_padding_bottom = get_theme_mod( 'mm_header_padding_bottom', '20' );
+        $header_border = get_theme_mod( 'mm_header_border', true );
+        $header_bg_color = get_theme_mod( 'mm_header_bg_color', '#ffffff' );
+        
+        // Top bar styles
+        $show_top_bar = get_theme_mod( 'show_top_bar', true );
+        $top_bar_bg_color = get_theme_mod( 'top_bar_bg_color', '#f9f9f9' );
+        $top_bar_text_color = get_theme_mod( 'top_bar_text_color', '#333333' );
         
         // Add custom classes to body
         add_filter( 'body_class', function( $classes ) use ( $sticky_header, $transparent_header ) {
@@ -51,31 +60,42 @@ class Multi_Maiven_Header_Builder {
                 $classes[] = 'has-sticky-header';
             }
             
-            if ( $transparent_header ) {
+            if ( $transparent_header && is_front_page() ) {
                 $classes[] = 'has-transparent-header';
             }
             
             return $classes;
         } );
         
-        // Add inline styles if needed
-        if ( $sticky_header || $transparent_header ) {
-            $custom_css = '';
-            
-            if ( $sticky_header ) {
-                $custom_css .= '.site-header { position: sticky; top: 0; z-index: 1000; }';
-                $custom_css .= '.admin-bar .site-header { top: 32px; }';
-                $custom_css .= '@media screen and (max-width: 782px) { .admin-bar .site-header { top: 46px; } }';
-            }
-            
-            if ( $transparent_header ) {
-                $custom_css .= '.site-header { background-color: transparent; position: absolute; width: 100%; }';
-                $custom_css .= '.site-header .site-title a, .site-header .site-description, .site-header .main-navigation a { color: #fff; }';
-            }
-            
-            if ( ! empty( $custom_css ) ) {
-                echo '<style type="text/css">' . $custom_css . '</style>';
-            }
+        // Prepare custom CSS
+        $custom_css = '';
+        
+        // Header styles
+        $custom_css .= ".site-header { background-color: {$header_bg_color}; }";
+        $custom_css .= ".header-container { padding-top: {$header_padding_top}px; padding-bottom: {$header_padding_bottom}px; }";
+        $custom_css .= ".header-container { border-bottom: " . ($header_border ? '1px solid var(--mm-color-border, #e9e9e9)' : 'none') . "; }";
+        
+        // Top bar styles
+        if ( $show_top_bar ) {
+            $custom_css .= ".top-bar { background-color: {$top_bar_bg_color}; color: {$top_bar_text_color}; }";
+        }
+        
+        // Sticky header styles
+        if ( $sticky_header ) {
+            $custom_css .= '.site-header { position: sticky; top: 0; z-index: 1000; }';
+            $custom_css .= '.admin-bar .site-header { top: 32px; }';
+            $custom_css .= '@media screen and (max-width: 782px) { .admin-bar .site-header { top: 46px; } }';
+        }
+        
+        // Transparent header styles
+        if ( $transparent_header && is_front_page() ) {
+            $custom_css .= '.site-header { background-color: transparent; position: absolute; width: 100%; }';
+            $custom_css .= '.site-header .site-title a, .site-header .site-description, .site-header .main-navigation a { color: #fff; }';
+        }
+        
+        // Output the CSS if not empty
+        if ( ! empty( $custom_css ) ) {
+            echo '<style type="text/css">' . $custom_css . '</style>';
         }
     }
 
@@ -83,17 +103,59 @@ class Multi_Maiven_Header_Builder {
      * Top bar markup
      */
     public function top_bar() {
-        $enable_top_bar = get_theme_mod( 'enable_top_bar', false );
-        $top_bar_content = get_theme_mod( 'top_bar_content', '' );
+        $show_top_bar = get_theme_mod( 'show_top_bar', true );
+        $top_bar_logged_in_only = get_theme_mod( 'top_bar_logged_in_only', false );
+        $top_bar_reverse_layout = get_theme_mod( 'top_bar_reverse_layout', false );
         
-        if ( ! $enable_top_bar ) {
+        // Check if top bar should be displayed
+        if ( ! $show_top_bar ) {
+            return;
+        }
+        
+        // Check if top bar should only be shown to logged-in users
+        if ( $top_bar_logged_in_only && ! is_user_logged_in() ) {
+            return;
+        }
+        
+        // Get top bar content
+        $top_bar_left = get_theme_mod( 'top_bar_left', '' );
+        $top_bar_center = get_theme_mod( 'top_bar_center', '' );
+        $top_bar_right = get_theme_mod( 'top_bar_right', '' );
+        
+        // Reverse layout if needed
+        if ( $top_bar_reverse_layout ) {
+            $temp = $top_bar_left;
+            $top_bar_left = $top_bar_right;
+            $top_bar_right = $temp;
+        }
+        
+        // Only display if there's content
+        if ( empty( $top_bar_left ) && empty( $top_bar_center ) && empty( $top_bar_right ) ) {
             return;
         }
         
         ?>
         <div class="top-bar">
             <div class="container">
-                <?php echo wp_kses_post( $top_bar_content ); ?>
+                <div class="top-bar-content">
+                    <?php if ( ! empty( $top_bar_left ) ) : ?>
+                        <div class="top-bar-left">
+                            <?php echo wp_kses_post( $top_bar_left ); ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if ( ! empty( $top_bar_center ) ) : ?>
+                        <div class="top-bar-center">
+                            <?php echo wp_kses_post( $top_bar_center ); ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if ( ! empty( $top_bar_right ) ) : ?>
+                        <div class="top-bar-right">
+                            <?php echo wp_kses_post( $top_bar_right ); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
         <?php
@@ -103,26 +165,39 @@ class Multi_Maiven_Header_Builder {
      * Header markup
      */
     public function header_markup() {
-        $logo_alignment = get_theme_mod( 'logo_alignment', 'left' );
-        $menu_alignment = get_theme_mod( 'menu_alignment', 'right' );
-        $sticky_header = get_theme_mod( 'sticky_header', false );
-        $transparent_header = get_theme_mod( 'transparent_header', false );
+        // Get header layout settings
+        $header_layout = get_theme_mod( 'mm_header_layout', 'default' );
+        $logo_position = get_theme_mod( 'mm_logo_position', 'left' );
+        $menu_position = get_theme_mod( 'mm_menu_position', 'right' );
+        $sticky_header = get_theme_mod( 'mm_sticky_header', false );
+        $transparent_header = get_theme_mod( 'mm_transparent_header', false );
+        $header_image = get_theme_mod( 'header_image', '' );
         
         // Header classes
         $header_classes = array( 'site-header' );
+        $header_classes[] = 'header-layout-' . $header_layout;
         
         if ( $sticky_header ) {
             $header_classes[] = 'sticky-header';
         }
         
-        if ( $transparent_header ) {
+        if ( $transparent_header && is_front_page() ) {
             $header_classes[] = 'transparent-header';
+        }
+        
+        // Container classes
+        $container_classes = array( 'header-container' );
+        
+        if ( $header_layout === 'centered' ) {
+            $container_classes[] = 'flex-column';
+        } else {
+            $container_classes[] = 'flex-row';
         }
         
         // Branding classes
         $branding_classes = array( 'site-branding' );
         
-        if ( $logo_alignment === 'center' ) {
+        if ( $logo_position === 'center' ) {
             $branding_classes[] = 'text-center';
         } else {
             $branding_classes[] = 'text-left';
@@ -130,53 +205,80 @@ class Multi_Maiven_Header_Builder {
         
         // Navigation classes
         $nav_classes = array( 'main-navigation' );
-        $nav_classes[] = 'menu-' . $menu_alignment;
+        $nav_classes[] = 'menu-' . $menu_position;
+        
+        // Header background image
+        $header_style = '';
+        if ( ! empty( $header_image ) ) {
+            $header_style = ' style="background-image: url(' . esc_url( $header_image ) . ');"';
+        }
         
         ?>
-        <header id="masthead" class="<?php echo esc_attr( implode( ' ', $header_classes ) ); ?>">
+        <header id="masthead" class="<?php echo esc_attr( implode( ' ', $header_classes ) ); ?>"<?php echo $header_style; ?>>
             <div class="container">
-                <div class="<?php echo esc_attr( implode( ' ', $branding_classes ) ); ?>">
-                    <?php
-                    if ( has_custom_logo() ) :
-                        the_custom_logo();
-                    else :
-                        ?>
-                        <h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
-                        <?php
-                        $multi_maiven_description = get_bloginfo( 'description', 'display' );
-                        if ( $multi_maiven_description || is_customize_preview() ) :
+                <div class="<?php echo esc_attr( implode( ' ', $container_classes ) ); ?>">
+                    <?php if ( $header_layout === 'split' ) : ?>
+                        <!-- Split menu layout -->
+                        <nav class="split-menu left-menu">
+                            <?php
+                            $left_menu = get_theme_mod( 'mm_left_menu', '' );
+                            if ( ! empty( $left_menu ) ) {
+                                wp_nav_menu(
+                                    array(
+                                        'menu'           => $left_menu,
+                                        'container'      => false,
+                                        'menu_class'     => 'menu left-header-menu',
+                                        'theme_location' => 'none',
+                                    )
+                                );
+                            }
                             ?>
-                            <p class="site-description"><?php echo $multi_maiven_description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
-                        <?php endif; ?>
+                        </nav>
                     <?php endif; ?>
-                </div><!-- .site-branding -->
+                    
+                    <div class="<?php echo esc_attr( implode( ' ', $branding_classes ) ); ?>">
+                        <?php
+                        if ( has_custom_logo() ) :
+                            the_custom_logo();
+                        else :
+                            ?>
+                            <h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
+                            <?php
+                            $multi_maiven_description = get_bloginfo( 'description', 'display' );
+                            if ( $multi_maiven_description || is_customize_preview() ) :
+                                ?>
+                                <p class="site-description"><?php echo $multi_maiven_description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div><!-- .site-branding -->
 
-                <nav id="site-navigation" class="<?php echo esc_attr( implode( ' ', $nav_classes ) ); ?>">
-                    <button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">
-                        <span class="screen-reader-text"><?php esc_html_e( 'Menu', 'multi-maiven' ); ?></span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                            <rect x="2" y="5" width="20" height="2"></rect>
-                            <rect x="2" y="11" width="20" height="2"></rect>
-                            <rect x="2" y="17" width="20" height="2"></rect>
-                        </svg>
-                    </button>
-                    <?php
-                    wp_nav_menu(
-                        array(
-                            'theme_location' => 'primary',
-                            'menu_id'        => 'primary-menu',
-                            'container'      => false,
-                            'fallback_cb'    => function() {
-                                echo '<ul id="primary-menu" class="menu">';
-                                echo '<li><a href="' . esc_url( admin_url( 'nav-menus.php' ) ) . '">' . esc_html__( 'Add a menu', 'multi-maiven' ) . '</a></li>';
-                                echo '</ul>';
-                            },
-                        )
-                    );
-                    ?>
-                </nav><!-- #site-navigation -->
-                
-                <?php do_action( 'mm_header_extras' ); ?>
+                    <nav id="site-navigation" class="<?php echo esc_attr( implode( ' ', $nav_classes ) ); ?>">
+                        <button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">
+                            <span class="screen-reader-text"><?php esc_html_e( 'Menu', 'multi-maiven' ); ?></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                                <rect x="2" y="5" width="20" height="2"></rect>
+                                <rect x="2" y="11" width="20" height="2"></rect>
+                                <rect x="2" y="17" width="20" height="2"></rect>
+                            </svg>
+                        </button>
+                        <?php
+                        wp_nav_menu(
+                            array(
+                                'theme_location' => 'primary',
+                                'menu_id'        => 'primary-menu',
+                                'container'      => false,
+                                'fallback_cb'    => function() {
+                                    echo '<ul id="primary-menu" class="menu">';
+                                    echo '<li><a href="' . esc_url( admin_url( 'nav-menus.php' ) ) . '">' . esc_html__( 'Add a menu', 'multi-maiven' ) . '</a></li>';
+                                    echo '</ul>';
+                                },
+                            )
+                        );
+                        ?>
+                    </nav><!-- #site-navigation -->
+                    
+                    <?php do_action( 'mm_header_extras' ); ?>
+                </div><!-- .header-container -->
             </div><!-- .container -->
         </header><!-- #masthead -->
         <?php
@@ -197,7 +299,7 @@ Multi_Maiven_Header_Builder::get_instance();
  * Add dark mode toggle to header extras
  */
 function multi_maiven_dark_mode_toggle() {
-    $enable_dark_mode = get_theme_mod( 'enable_dark_mode', false );
+    $enable_dark_mode = get_theme_mod( 'dark_mode_toggle', true );
     $dark_mode_toggle_position = get_theme_mod( 'dark_mode_toggle_position', 'header' );
     
     if ( ! $enable_dark_mode || ( $dark_mode_toggle_position !== 'header' && $dark_mode_toggle_position !== 'both' ) ) {
