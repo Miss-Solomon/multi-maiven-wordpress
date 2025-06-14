@@ -1,0 +1,1 @@
+/* feature-columns.php - Placeholder for Multi Maiven Theme */
