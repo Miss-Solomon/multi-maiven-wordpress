@@ -1,0 +1,96 @@
+/*
+Theme Name: Multi Maiven
+Theme URI: https://example.com/multi-maiven
+Author: Multi Maiven Team
+Author URI: https://example.com
+Description: A hybrid PHP + block-template WordPress theme that mimics Kadence Themes's modular header/footer builder, Customizer controls, block patterns, and dark-mode toggle without requiring any plugins.
+Version: 1.0.0
+Requires at least: 5.9
+Tested up to: 6.4
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: multi-maiven
+Tags: block-patterns, block-styles, custom-colors, custom-logo, custom-menu, editor-style, full-site-editing, one-column, two-columns, right-sidebar, left-sidebar, responsive, dark-mode, translation-ready, accessibility-ready
+*/
+
+/* 
+This is the main stylesheet for the Multi Maiven theme.
+Additional styles are enqueued through functions.php
+*/
+
+/* Base Styles */
+:root {
+  --mm-body-bg: #ffffff;
+  --mm-header-bg: #f8f9fa;
+  --mm-footer-bg: #f8f9fa;
+  --mm-link-color: #0073aa;
+  --mm-link-hover-color: #00a0d2;
+  --mm-text-color: #333333;
+  --mm-heading-color: #222222;
+  --mm-font-family: 'Roboto', sans-serif;
+  --mm-font-size-base: 16px;
+  --mm-line-height-base: 1.6;
+}
+
+body {
+  font-family: var(--mm-font-family);
+  font-size: var(--mm-font-size-base);
+  line-height: var(--mm-line-height-base);
+  color: var(--mm-text-color);
+  background-color: var(--mm-body-bg);
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: var(--mm-link-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover, a:focus {
+  color: var(--mm-link-hover-color);
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--mm-heading-color);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Header */
+.site-header {
+  background-color: var(--mm-header-bg);
+  padding: 20px 0;
+}
+
+/* Footer */
+.site-footer {
+  background-color: var(--mm-footer-bg);
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+/* Sidebar */
+.sidebar {
+  padding: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    font-size: calc(var(--mm-font-size-base) - 1px);
+  }
+}
