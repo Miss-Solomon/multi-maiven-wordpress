@@ -1,8 +1,3 @@
-Next, the footer does not appear. The Footer Builder needs to be contained in its own section. There should not be any footer controls in the header. I want to keep the options for different columns, an optional advertising widget, and a bottom footer bar. There should be multiple menu options. 
-
-Here is some sample code:
-
-
 <?php
 /**
  * Footer Builder Functionality

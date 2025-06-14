@@ -1,5 +1,3 @@
-The next issue is that the header does not appear, and the header builder does not contain all of the right controls. Here is some sample code from my previous attempt for you to reference:
-
 <?php
 /**
  * Header Builder Functionality
